@@ -20,7 +20,7 @@ module Database.MongoDB.Query (
 	-- ** Insert
 	insert, insert_, insertMany, insertMany_, insertAll, insertAll_,
 	-- ** Update
-	save, replace, repsert, Modifier, modify,
+	save, replace, repsert, Modifier, modify, modsert,
 	-- ** Delete
 	delete, deleteOne,
 	-- * Read
@@ -344,6 +344,10 @@ type Modifier = Document
 modify :: (MonadIO m) => Selection -> Modifier -> Action m ()
 -- ^ Update all documents in selection using given modifier
 modify = update [MultiUpdate]
+
+modsert :: (MonadIO m) => Selection -> Modifier -> Action m ()
+-- ^ Update all documents in selection using given modifier, or insert a new document based on the Modifier document. See <http://www.mongodb.org/display/DOCS/Updating#Updating-ModifierOperations>
+modsert = update [Upsert, MultiUpdate]
 
 update :: (MonadIO m) => [UpdateOption] -> Selection -> Document -> Action m ()
 -- ^ Update first document in selection using updater document, unless 'MultiUpdate' option is supplied then update all documents in selection. If 'Upsert' option is supplied then treat updater as document and insert it if selection is empty.
